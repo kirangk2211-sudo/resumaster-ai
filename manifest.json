@@ -1,4 +1,3 @@
-
 {
   "name": "ResuMaster AI Builder",
   "short_name": "ResuMaster",
@@ -9,7 +8,7 @@
   "theme_color": "#2563eb",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3135/3135673.png",
+      "src": "/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
