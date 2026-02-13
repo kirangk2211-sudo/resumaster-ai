@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ResumeData, ResumeTemplate, SubscriptionInfo, AppTab } from './types';
 import ResumeForm from './components/ResumeForm';
@@ -13,7 +12,6 @@ import JobTailor from './components/JobTailor';
 import SyncStatus from './components/SyncStatus';
 import { parseResumeWithAI } from './services/geminiService';
 import { dataService } from './services/dataService';
-import { githubService } from './services/githubService';
 
 declare const html2pdf: any;
 
@@ -59,7 +57,7 @@ const ACCENT_COLORS = [
 
 const App: React.FC = () => {
   const [isAppLoaded, setIsAppLoaded] = useState(false);
-  const [user, setUser] = useState<{ email: string, name: string, token: string, githubToken?: string } | null>(null);
+  const [user, setUser] = useState<{ email: string, name: string, token: string } | null>(null);
   const [resumeData, setResumeData] = useState<ResumeData>(INITIAL_DATA);
   const [template, setTemplate] = useState<ResumeTemplate>('modern');
   const [accentColor, setAccentColor] = useState(ACCENT_COLORS[0]);
@@ -67,7 +65,7 @@ const App: React.FC = () => {
   const [isParsing, setIsParsing] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [downloadCount, setDownloadCount] = useState(0);
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'saved' | 'github'>('saved');
+  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'saved'>('saved');
   
   const [isExtractionModalOpen, setIsExtractionModalOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
@@ -103,18 +101,9 @@ const App: React.FC = () => {
       if (sessionUser && sessionUser.token) {
         setUser(sessionUser);
         
-        // Initial data load
+        // Initial data load from local storage
         const localData = dataService.loadResumeData(sessionUser.email);
         if (localData) setResumeData(localData);
-
-        // Try GitHub sync if token exists
-        if (sessionUser.githubToken) {
-          const cloudData = await githubService.fetchFromGithub(sessionUser.githubToken);
-          if (cloudData) {
-            setResumeData(cloudData);
-            setSyncStatus('github');
-          }
-        }
       }
       setDownloadCount(dataService.getDownloadCount());
       setIsAppLoaded(true);
@@ -122,23 +111,13 @@ const App: React.FC = () => {
     init();
   }, []);
 
-  // Auto-save logic (Local + GitHub)
+  // Auto-save logic (Local)
   useEffect(() => {
     if (user) {
       setSyncStatus('syncing');
       const timer = setTimeout(async () => {
         dataService.saveResumeData(user.email, resumeData);
-        
-        if (user.githubToken) {
-          const githubResult = await githubService.syncToGithub(user.githubToken, resumeData);
-          if (githubResult) {
-            setSyncStatus('github');
-          } else {
-            setSyncStatus('saved');
-          }
-        } else {
-          setSyncStatus('saved');
-        }
+        setSyncStatus('saved');
       }, 1500);
       return () => clearTimeout(timer);
     }
@@ -226,12 +205,6 @@ const App: React.FC = () => {
     } finally {
       setIsGeneratingPdf(false);
     }
-  };
-
-  const handleUpdateGithubToken = (newToken: string) => {
-    const updatedUser = { ...user, githubToken: newToken };
-    setUser(updatedUser);
-    dataService.saveSession(updatedUser);
   };
 
   return (
@@ -379,7 +352,7 @@ const App: React.FC = () => {
       </nav>
 
       <AiAssistant resumeData={resumeData} onUpdate={setResumeData} isOpen={isAiAssistantOpen} onClose={() => setIsAiAssistantOpen(false)} />
-      <AccountMenu isOpen={isAccountMenuOpen} onClose={() => setIsAccountMenuOpen(false)} onNavigate={(v) => {setAccountView(v); setIsAccountModalOpen(true); setIsAccountMenuOpen(false);}} onLogout={() => {dataService.clearSession(); setUser(null); setIsAccountMenuOpen(false);}} isSubscribed={subscription.status === 'active'} userName={user.name} downloadCount={downloadCount} />
+      <AccountMenu isOpen={isAccountMenuOpen} onClose={() => setIsAccountMenuOpen(false)} onNavigate={(v) => {setAccountView(v); setIsAccountModalOpen(true); setIsAccountMenuOpen(false);}} onLogout={() => {dataService.clearSession(); setUser(null); setIsAccountMenuOpen(false);}} isSubscribed={subscription.status === 'active'} userName={user?.name} downloadCount={downloadCount} />
       <ExtractionModal isOpen={isExtractionModalOpen} onClose={() => setIsExtractionModalOpen(false)} onUpload={async (f) => {setIsParsing(true); const reader = new FileReader(); reader.onload = async (e) => { const base64 = (e.target?.result as string).split(',')[1]; const parsed = await parseResumeWithAI(base64, f.type); if(parsed) {setResumeData(parsed); setTemplate('modern'); setActiveTab('preview'); setIsExtractionModalOpen(false);} setIsParsing(false);}; reader.readAsDataURL(f);}} isProcessing={isParsing} />
       <AccountModal 
         isOpen={isAccountModalOpen} 
@@ -387,9 +360,7 @@ const App: React.FC = () => {
         onClose={() => setIsAccountModalOpen(false)} 
         subscription={subscription} 
         onSubscribe={() => {setSubscription({...subscription, status: 'active', expiryDate: 'Forever'}); setIsAccountModalOpen(false);}} 
-        userName={user.name} 
-        githubToken={user.githubToken}
-        onUpdateGithubToken={handleUpdateGithubToken}
+        userName={user?.name || ''} 
       />
       <ConsentBar onAccept={() => {}} />
     </div>
