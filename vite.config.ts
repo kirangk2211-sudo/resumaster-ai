@@ -5,7 +5,8 @@ export default defineConfig({
   plugins: [react()],
   define: {
     'process.env': {
-      API_KEY: JSON.stringify(process.env.API_KEY)
+      API_KEY: JSON.stringify(process.env.API_KEY),
+      RAZORPAY_KEY_ID: JSON.stringify(process.env.RAZORPAY_KEY_ID)
     }
   },
   server: {

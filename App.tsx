@@ -12,6 +12,7 @@ import JobTailor from './components/JobTailor';
 import SyncStatus from './components/SyncStatus';
 import { parseResumeWithAI } from './services/geminiService';
 import { dataService } from './services/dataService';
+import { paymentService } from './services/paymentService';
 
 declare const html2pdf: any;
 
@@ -74,14 +75,11 @@ const App: React.FC = () => {
   const [accountView, setAccountView] = useState<'create' | 'details'>('create');
   
   const [subscription, setSubscription] = useState<SubscriptionInfo>({ 
-    status: 'active', 
-    planName: 'Pro Monthly',
-    price: 75,
-    expiryDate: 'Unlimited',
-    billingHistory: [
-      { id: 'TXN-0982', date: 'Oct 12, 2024', amount: 75, status: 'Successful' },
-      { id: 'TXN-0122', date: 'Sep 12, 2024', amount: 75, status: 'Successful' }
-    ]
+    status: 'free', 
+    planName: 'Basic',
+    price: 0,
+    expiryDate: 'N/A',
+    billingHistory: []
   });
 
   const [previewScale, setPreviewScale] = useState(1);
@@ -155,6 +153,35 @@ const App: React.FC = () => {
       if (saved) setResumeData(saved);
     }} />;
   }
+
+  const handleSubscribe = () => {
+    if (!user) return;
+    
+    paymentService.initializePayment({
+      amount: 75,
+      email: user.email,
+      userName: user.name,
+      onSuccess: (response) => {
+        const newTxn = {
+          id: response.razorpay_payment_id || `TXN-${Date.now()}`,
+          date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          amount: 75,
+          status: 'Successful' as const
+        };
+        
+        setSubscription({
+          status: 'active',
+          planName: 'Pro Monthly',
+          price: 75,
+          expiryDate: 'Lifetime Access',
+          billingHistory: [newTxn, ...(subscription.billingHistory || [])]
+        });
+        
+        setIsAccountModalOpen(false);
+        alert("Payment Successful! Your Pro features are now unlocked.");
+      }
+    });
+  };
 
   const handleDownload = async (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
@@ -359,7 +386,7 @@ const App: React.FC = () => {
         view={accountView} 
         onClose={() => setIsAccountModalOpen(false)} 
         subscription={subscription} 
-        onSubscribe={() => {setSubscription({...subscription, status: 'active', expiryDate: 'Forever'}); setIsAccountModalOpen(false);}} 
+        onSubscribe={handleSubscribe} 
         userName={user?.name || ''} 
       />
       <ConsentBar onAccept={() => {}} />
