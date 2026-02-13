@@ -1,4 +1,3 @@
-
 {
   "appId": "com.resumaster.ai",
   "appName": "ResuMaster AI",
@@ -6,10 +5,5 @@
   "server": {
     "androidScheme": "https",
     "cleartext": true
-  },
-  "android": {
-    "buildOptions": {
-      "releaseType": "debug"
-    }
   }
 }
