@@ -1,8 +1,41 @@
-
 import React, { useState } from 'react';
 import { ResumeData } from '../types';
 import { enhanceText } from '../services/geminiService';
 import { securityService } from '../services/securityService';
+
+// Helper components moved outside to prevent re-mounting on every keystroke
+const SectionTitle = ({ title, icon, action }: { title: string, icon: string, action?: React.ReactNode }) => (
+  <div className="flex justify-between items-center mb-8 mt-14 first:mt-0 border-b border-slate-100 pb-6">
+    <h3 className="text-sm sm:text-base font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-4">
+      <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
+        <i className={`fa-solid ${icon} text-lg`}></i>
+      </div>
+      {title}
+    </h3>
+    {action}
+  </div>
+);
+
+const Label = ({ children }: { children?: React.ReactNode }) => (
+  <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{children}</label>
+);
+
+const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
+  <input 
+    {...props}
+    className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-blue-500 focus:bg-white transition-all outline-none text-slate-800 text-base font-semibold placeholder:text-slate-300"
+  />
+);
+
+const AIPolishButton = ({ onPolish, id, isLoading }: { onPolish: () => void, id: string, isLoading: boolean }) => (
+  <button 
+    onClick={onPolish}
+    disabled={isLoading}
+    className="text-xs bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black tracking-widest flex items-center gap-2 active:scale-95 transition-all shadow-md disabled:opacity-50 shrink-0"
+  >
+    {isLoading ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-wand-magic-sparkles"></i>} POLISH
+  </button>
+);
 
 interface Props {
   data: ResumeData;
@@ -49,39 +82,6 @@ const ResumeForm: React.FC<Props> = ({
     callback(securityService.sanitize(enhanced));
     setIsEnhancing(null);
   };
-
-  const SectionTitle = ({ title, icon, action }: { title: string, icon: string, action?: React.ReactNode }) => (
-    <div className="flex justify-between items-center mb-8 mt-14 first:mt-0 border-b border-slate-100 pb-6">
-      <h3 className="text-sm sm:text-base font-black text-slate-800 uppercase tracking-[0.2em] flex items-center gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-sm">
-          <i className={`fa-solid ${icon} text-lg`}></i>
-        </div>
-        {title}
-      </h3>
-      {action}
-    </div>
-  );
-
-  const Label = ({ children }: { children?: React.ReactNode }) => (
-    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{children}</label>
-  );
-
-  const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => (
-    <input 
-      {...props}
-      className="w-full px-5 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:border-blue-500 focus:bg-white transition-all outline-none text-slate-800 text-base font-semibold placeholder:text-slate-300"
-    />
-  );
-
-  const AIPolishButton = ({ onPolish, id, isLoading }: { onPolish: () => void, id: string, isLoading: boolean }) => (
-    <button 
-      onClick={onPolish}
-      disabled={isLoading}
-      className="text-xs bg-slate-900 text-white px-4 py-2.5 rounded-xl font-black tracking-widest flex items-center gap-2 active:scale-95 transition-all shadow-md disabled:opacity-50 shrink-0"
-    >
-      {isLoading ? <i className="fa-solid fa-spinner fa-spin"></i> : <i className="fa-solid fa-wand-magic-sparkles"></i>} POLISH
-    </button>
-  );
 
   const handleAddItem = (val: string, setVal: React.Dispatch<React.SetStateAction<string>>, currentList: string[], updateFn: (list: string[]) => void) => {
     if (val.trim()) {
