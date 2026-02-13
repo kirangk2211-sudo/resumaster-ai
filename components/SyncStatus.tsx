@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 
 interface Props {
-  status: 'idle' | 'syncing' | 'saved' | 'github';
+  status: 'idle' | 'syncing' | 'saved';
 }
 
 const SyncStatus: React.FC<Props> = ({ status }) => {
@@ -38,12 +37,7 @@ const SyncStatus: React.FC<Props> = ({ status }) => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
           </div>
-          <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Encrypting...</span>
-        </>
-      ) : status === 'github' ? (
-        <>
-          <i className="fa-solid fa-cloud-check text-emerald-500 text-[10px]"></i>
-          <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest">GitHub Synced</span>
+          <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">Saving...</span>
         </>
       ) : status === 'saved' ? (
         <>
@@ -53,7 +47,7 @@ const SyncStatus: React.FC<Props> = ({ status }) => {
       ) : (
         <>
           <i className="fa-solid fa-cloud text-slate-300 text-[10px]"></i>
-          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Ready to Sync</span>
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Ready</span>
         </>
       )}
     </div>
