@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { SubscriptionInfo } from '../types';
 import LegalContent from './LegalContent';
@@ -10,14 +9,11 @@ interface Props {
   subscription: SubscriptionInfo;
   onSubscribe: () => void;
   userName?: string;
-  githubToken?: string;
-  onUpdateGithubToken?: (token: string) => void;
 }
 
-const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, onSubscribe, userName, githubToken, onUpdateGithubToken }) => {
+const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, onSubscribe, userName }) => {
   const [activeLegal, setActiveLegal] = useState<'privacy' | 'terms' | null>(null);
-  const [activeTab, setActiveTab] = useState<'plan' | 'billing' | 'github'>('plan');
-  const [tempToken, setTempToken] = useState(githubToken || '');
+  const [activeTab, setActiveTab] = useState<'plan' | 'billing' | 'mobile'>('plan');
 
   if (!isOpen) return null;
 
@@ -69,10 +65,10 @@ const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, on
                 Billing
               </button>
               <button 
-                onClick={() => setActiveTab('github')}
-                className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'github' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
+                onClick={() => setActiveTab('mobile')}
+                className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'mobile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
               >
-                Sync & CI
+                Mobile App
               </button>
            </div>
 
@@ -149,55 +145,18 @@ const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, on
                 </div>
               )}
 
-              {activeTab === 'github' && (
-                <div className="space-y-4">
-                  <div className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50">
-                    <div className="flex items-center gap-2 mb-4">
-                        <i className="fa-brands fa-github text-slate-900"></i>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">GitHub Cloud Backup</span>
-                    </div>
-                    
-                    <p className="text-[11px] text-slate-500 leading-relaxed mb-6 font-medium">
-                      Sync your resume data to a private GitHub Gist. This keeps your data safe across all devices.
-                    </p>
-
-                    <div className="space-y-4">
-                        <div>
-                          <label className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 block">Personal Access Token</label>
-                          <input 
-                            type="password"
-                            value={tempToken}
-                            onChange={(e) => setTempToken(e.target.value)}
-                            placeholder="ghp_xxxxxxxxxxxx"
-                            className="w-full px-4 py-3 bg-white border border-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-xs font-bold font-mono"
-                          />
-                        </div>
-                        <button 
-                          onClick={() => onUpdateGithubToken?.(tempToken)}
-                          className="w-full py-3 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all"
-                        >
-                          {githubToken ? 'Update Sync Token' : 'Enable GitHub Sync'}
-                        </button>
-                    </div>
+              {activeTab === 'mobile' && (
+                <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
+                  <div className="flex items-center gap-2 mb-3">
+                      <i className="fa-solid fa-microchip text-blue-600"></i>
+                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Mobile Build (CI/CD)</span>
                   </div>
-
-                  <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
-                    <div className="flex items-center gap-2 mb-3">
-                        <i className="fa-solid fa-microchip text-blue-600"></i>
-                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Mobile Build (CI/CD)</span>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-medium mb-4 leading-relaxed">
-                      To download your Android APK, go to your repository on GitHub, click <span className="font-bold">Actions</span>, select <span className="font-bold">DEPLOY: Build Android App</span>, and download the <span className="font-bold">Artifacts</span> from the latest run.
-                    </p>
-                    <a 
-                      href="https://github.com/settings/tokens/new?description=ResuMaster%20AI&scopes=gist" 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="block text-center text-[9px] font-black text-blue-600 uppercase tracking-widest hover:underline bg-white py-2 rounded-lg border border-blue-100 shadow-sm"
-                    >
-                      Setup Tutorial
-                    </a>
-                  </div>
+                  <p className="text-[10px] text-slate-600 font-medium mb-4 leading-relaxed">
+                    To download your Android APK, go to your repository on GitHub, click <span className="font-bold">Actions</span>, select <span className="font-bold">DEPLOY: Build Android App</span>, and download the <span className="font-bold">Artifacts</span> from the latest run.
+                  </p>
+                  <p className="text-[10px] text-slate-500 italic">
+                    Note: Your data is saved locally in your vault for maximum privacy.
+                  </p>
                 </div>
               )}
            </div>
