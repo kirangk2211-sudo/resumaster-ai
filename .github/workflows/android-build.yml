@@ -56,10 +56,9 @@ jobs:
 
       - name: Patch Build Gradle (Auto-Increment Version)
         run: |
-          # Set versionCode to GitHub Run Number to ensure every upload is an "upgrade"
-          sed -i "s/versionCode 1/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
-          # Also update versionName for clarity
-          sed -i "s/versionName \"1.0\"/versionName \"1.0.$GITHUB_RUN_NUMBER\"/g" android/app/build.gradle
+          # Use a more robust regex to find and replace versionCode and versionName
+          sed -i "s/versionCode [0-9]*/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
+          sed -i "s/versionName \"[0-9.]*\"/versionName \"1.0.$GITHUB_RUN_NUMBER\"/g" android/app/build.gradle
 
       - name: Build Unsigned Release AAB
         run: |
@@ -68,7 +67,7 @@ jobs:
           ./gradlew bundleRelease
 
       - name: Sign Android Release AAB
-        uses: r0adkll/sign-android-release@v1.1.2
+        uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
           releaseDirectory: android/app/build/outputs/bundle/release
