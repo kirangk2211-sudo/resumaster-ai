@@ -1,0 +1,15 @@
+{
+  "name": "ResuMaster AI",
+  "short_name": "ResuMaster",
+  "description": "ResuMaster AI is a professional resume builder that uses Gemini AI to craft high-impact career documents. Features AI-powered summaries, job description tailoring, and pixel-perfect PDF exports.",
+  "version": "1.0.0",
+  "author": "ResuMaster AI Team",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "categories": [
+    "Productivity",
+    "Business",
+    "Education"
+  ]
+}
