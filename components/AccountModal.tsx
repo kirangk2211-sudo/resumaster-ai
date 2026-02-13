@@ -14,6 +14,7 @@ interface Props {
 const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, onSubscribe, userName }) => {
   const [activeLegal, setActiveLegal] = useState<'privacy' | 'terms' | null>(null);
   const [activeTab, setActiveTab] = useState<'plan' | 'billing' | 'mobile'>('plan');
+  const [showDevSettings, setShowDevSettings] = useState(false);
 
   if (!isOpen) return null;
 
@@ -47,50 +48,68 @@ const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, on
            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
              {isSubscribed ? 'Pro Membership' : 'Upgrade to Pro'}
            </h2>
-           
+
            <div className="flex bg-slate-100 p-1 rounded-2xl my-6 overflow-x-auto no-scrollbar">
-              <button onClick={() => setActiveTab('plan')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'plan' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Plan</button>
-              <button onClick={() => setActiveTab('billing')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'billing' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Billing</button>
-              <button onClick={() => setActiveTab('mobile')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'mobile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Mobile</button>
+              <button onClick={() => setActiveTab('plan')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'plan' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Plan</button>
+              <button onClick={() => setActiveTab('billing')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'billing' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Billing</button>
+              <button onClick={() => setActiveTab('mobile')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'mobile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Mobile</button>
            </div>
 
            <div className="space-y-4 text-left">
               {activeTab === 'plan' && (
                 <div className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50">
-                   <p className="text-xs font-bold text-slate-600">Plan details and subscription status go here.</p>
+                  <p className="text-xs font-bold text-slate-600 leading-relaxed">Your plan is managed securely. You can download resumes as long as your subscription is active.</p>
                 </div>
               )}
 
               {activeTab === 'mobile' && (
                 <div className="space-y-4">
-                  {/* ZERO ERROR SETUP */}
-                  <div className="p-6 rounded-3xl border border-emerald-100 bg-emerald-50/30">
-                    <div className="flex items-center gap-2 mb-3">
-                        <i className="fa-solid fa-check-double text-emerald-600"></i>
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Zero-Error Key Setup</span>
+                  {/* Google Play Store Launch Checklist */}
+                  <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
+                    <div className="flex items-center gap-2 mb-4">
+                        <i className="fa-solid fa-list-check text-blue-600"></i>
+                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Play Store Launch Checklist</span>
                     </div>
-                    <p className="text-[10px] text-slate-600 font-medium mb-4">Run this in Google Cloud Shell to create a key with a known password (123456):</p>
-                    <div className="bg-slate-900 text-emerald-400 p-4 rounded-xl text-[9px] font-mono break-all mb-4 select-all">
-                      keytool -genkey -v -keystore resumaster.keystore -alias resu -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=ResuMaster"
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">1</div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-900 uppercase">Advertising ID Declaration</p>
+                          <p className="text-[9px] text-slate-500 font-medium">In Play Console, go to <span className="font-bold">App Content</span> → <span className="font-bold">Advertising ID</span>. Select "Yes" (Our code now includes the required permission).</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">2</div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-900 uppercase">Version Code Error</p>
+                          <p className="text-[9px] text-slate-500 font-medium">I updated the build script to auto-increment. Every build will now have a unique version (1, 2, 3...) to fix the "Upgrade" error.</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-black shrink-0">3</div>
+                        <div>
+                          <p className="text-[10px] font-black text-slate-900 uppercase">Upload Artifact</p>
+                          <p className="text-[9px] text-slate-500 font-medium">Download the <span className="font-bold">Signed AAB</span> from GitHub Actions and upload it to the "App Bundles" section of your release.</p>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-[10px] text-slate-600 font-medium mb-2">Then, update your GitHub Secrets to exactly these:</p>
-                    <ul className="text-[9px] text-slate-700 font-bold space-y-1">
-                      <li>• <span className="text-blue-600">ALIAS:</span> resu</li>
-                      <li>• <span className="text-blue-600">KEYSTORE_PASSWORD:</span> 123456</li>
-                      <li>• <span className="text-blue-600">KEY_PASSWORD:</span> 123456</li>
-                    </ul>
                   </div>
 
-                  <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
-                    <div className="flex items-center gap-2 mb-3">
-                        <i className="fa-solid fa-code text-blue-600"></i>
-                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Get Base64 String</span>
+                  <button 
+                    onClick={() => setShowDevSettings(!showDevSettings)}
+                    className="w-full py-3 text-[9px] font-black text-slate-400 uppercase tracking-widest border border-slate-100 rounded-2xl hover:bg-slate-50"
+                  >
+                    {showDevSettings ? 'Hide Maintenance Keys' : 'Show Maintenance Keys'}
+                  </button>
+
+                  {showDevSettings && (
+                    <div className="p-6 rounded-3xl border border-emerald-100 bg-emerald-50/30 animate-in slide-in-from-top-2">
+                        <p className="text-[9px] font-bold text-slate-600 uppercase mb-2">Build Command Ref:</p>
+                        <div className="bg-slate-900 text-emerald-400 p-4 rounded-xl text-[9px] font-mono break-all select-all">
+                          keytool -genkey -v -keystore resumaster.keystore -alias resu -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456
+                        </div>
                     </div>
-                    <p className="text-[10px] text-slate-600 font-medium mb-3">Run this next to get your <code className="bg-white px-1">SIGNING_KEY</code>:</p>
-                    <div className="bg-slate-900 text-blue-300 p-4 rounded-xl text-[9px] font-mono break-all select-all">
-                      base64 resumaster.keystore -w 0
-                    </div>
-                  </div>
+                  )}
                 </div>
               )}
            </div>
