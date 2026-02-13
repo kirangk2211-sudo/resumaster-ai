@@ -47,116 +47,50 @@ const AccountModal: React.FC<Props> = ({ isOpen, view, onClose, subscription, on
            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
              {isSubscribed ? 'Pro Membership' : 'Upgrade to Pro'}
            </h2>
-           <p className="text-sm text-slate-500 mt-2 mb-8">
-             {isSubscribed ? `Welcome back, ${userName}!` : 'Unlock PDF downloads and premium templates.'}
-           </p>
-
-           <div className="flex bg-slate-100 p-1 rounded-2xl mb-6 overflow-x-auto no-scrollbar">
-              <button 
-                onClick={() => setActiveTab('plan')}
-                className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'plan' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
-              >
-                Plan
-              </button>
-              <button 
-                onClick={() => setActiveTab('billing')}
-                className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'billing' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
-              >
-                Billing
-              </button>
-              <button 
-                onClick={() => setActiveTab('mobile')}
-                className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === 'mobile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}
-              >
-                Mobile App
-              </button>
+           
+           <div className="flex bg-slate-100 p-1 rounded-2xl my-6 overflow-x-auto no-scrollbar">
+              <button onClick={() => setActiveTab('plan')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'plan' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Plan</button>
+              <button onClick={() => setActiveTab('billing')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'billing' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Billing</button>
+              <button onClick={() => setActiveTab('mobile')} className={`flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'mobile' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400'}`}>Mobile</button>
            </div>
 
            <div className="space-y-4 text-left">
               {activeTab === 'plan' && (
                 <div className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Plan</span>
-                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${isSubscribed ? 'bg-emerald-500 text-white' : 'bg-slate-200 text-slate-500'}`}>
-                      {subscription.status.toUpperCase()}
-                    </span>
-                  </div>
-                  
-                  {!isSubscribed ? (
-                    <>
-                      <div className="flex items-baseline gap-1 mb-6">
-                        <span className="text-3xl font-black text-slate-900">₹75</span>
-                        <span className="text-slate-400 text-sm font-bold">/ month</span>
-                      </div>
-                      <ul className="space-y-3 mb-8">
-                        {['Unlimited PDF Exports', 'AI Resume Tailoring', 'Premium Modern Templates'].map(feat => (
-                          <li key={feat} className="flex items-center gap-3 text-xs font-bold text-slate-600">
-                            <i className="fa-solid fa-circle-check text-emerald-500"></i>
-                            {feat}
-                          </li>
-                        ))}
-                      </ul>
-                      <button 
-                        onClick={onSubscribe}
-                        className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-100 active:scale-95 transition-all"
-                      >
-                        Unlock Pro Access
-                      </button>
-                    </>
-                  ) : (
-                    <div className="space-y-5">
-                      <div className="flex justify-between border-b border-slate-100 pb-3">
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Plan Type</span>
-                        <span className="text-xs font-black text-slate-900">{subscription.planName}</span>
-                      </div>
-                      <div className="flex justify-between border-b border-slate-100 pb-3">
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Price</span>
-                        <span className="text-xs font-black text-slate-900">₹{subscription.price}.00 / mo</span>
-                      </div>
-                      <div className="flex justify-between border-b border-slate-100 pb-3">
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Valid Until</span>
-                        <span className="text-xs font-black text-slate-900">{subscription.expiryDate}</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'billing' && (
-                <div className="p-6 rounded-3xl border border-slate-100 bg-slate-50/50">
-                   <div className="flex items-center gap-2 mb-6">
-                      <i className="fa-solid fa-receipt text-emerald-500"></i>
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Transaction Log</span>
-                   </div>
-                   <div className="space-y-4 max-h-[240px] overflow-y-auto no-scrollbar pr-1">
-                      {subscription.billingHistory?.map((txn) => (
-                        <div key={txn.id} className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-                           <div>
-                              <p className="text-xs font-black text-slate-900">{txn.date}</p>
-                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{txn.id}</p>
-                           </div>
-                           <div className="text-right">
-                              <p className="text-sm font-black text-emerald-600">₹{txn.amount}.00</p>
-                              <p className="text-[8px] font-black text-slate-300 uppercase tracking-tighter">SUCCESSFUL</p>
-                           </div>
-                        </div>
-                      ))}
-                   </div>
+                   <p className="text-xs font-bold text-slate-600">Plan details and subscription status go here.</p>
                 </div>
               )}
 
               {activeTab === 'mobile' && (
-                <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
-                  <div className="flex items-center gap-2 mb-3">
-                      <i className="fa-solid fa-microchip text-blue-600"></i>
-                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Mobile Build (CI/CD)</span>
+                <div className="space-y-4">
+                  {/* ZERO ERROR SETUP */}
+                  <div className="p-6 rounded-3xl border border-emerald-100 bg-emerald-50/30">
+                    <div className="flex items-center gap-2 mb-3">
+                        <i className="fa-solid fa-check-double text-emerald-600"></i>
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Zero-Error Key Setup</span>
+                    </div>
+                    <p className="text-[10px] text-slate-600 font-medium mb-4">Run this in Google Cloud Shell to create a key with a known password (123456):</p>
+                    <div className="bg-slate-900 text-emerald-400 p-4 rounded-xl text-[9px] font-mono break-all mb-4 select-all">
+                      keytool -genkey -v -keystore resumaster.keystore -alias resu -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=ResuMaster"
+                    </div>
+                    <p className="text-[10px] text-slate-600 font-medium mb-2">Then, update your GitHub Secrets to exactly these:</p>
+                    <ul className="text-[9px] text-slate-700 font-bold space-y-1">
+                      <li>• <span className="text-blue-600">ALIAS:</span> resu</li>
+                      <li>• <span className="text-blue-600">KEYSTORE_PASSWORD:</span> 123456</li>
+                      <li>• <span className="text-blue-600">KEY_PASSWORD:</span> 123456</li>
+                    </ul>
                   </div>
-                  <p className="text-[10px] text-slate-600 font-medium mb-4 leading-relaxed">
-                    To download your Android APK, go to your repository on GitHub, click <span className="font-bold">Actions</span>, select <span className="font-bold">DEPLOY: Build Android App</span>, and download the <span className="font-bold">Artifacts</span> from the latest run.
-                  </p>
-                  <p className="text-[10px] text-slate-500 italic">
-                    Note: Your data is saved locally in your vault for maximum privacy.
-                  </p>
+
+                  <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
+                    <div className="flex items-center gap-2 mb-3">
+                        <i className="fa-solid fa-code text-blue-600"></i>
+                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Get Base64 String</span>
+                    </div>
+                    <p className="text-[10px] text-slate-600 font-medium mb-3">Run this next to get your <code className="bg-white px-1">SIGNING_KEY</code>:</p>
+                    <div className="bg-slate-900 text-blue-300 p-4 rounded-xl text-[9px] font-mono break-all select-all">
+                      base64 resumaster.keystore -w 0
+                    </div>
+                  </div>
                 </div>
               )}
            </div>
