@@ -37,6 +37,52 @@ const AIPolishButton = ({ onPolish, id, isLoading }: { onPolish: () => void, id:
   </button>
 );
 
+const ListSection = ({ 
+  title, icon, items, onUpdate, inputValue, setInputValue, placeholder, handleAddItem 
+}: { 
+  title: string, icon: string, items: string[], onUpdate: (list: string[]) => void, inputValue: string, setInputValue: React.Dispatch<React.SetStateAction<string>>, placeholder: string, handleAddItem: (val: string, setVal: React.Dispatch<React.SetStateAction<string>>, currentList: string[], updateFn: (list: string[]) => void) => void
+}) => (
+  <div>
+    <SectionTitle title={title} icon={icon} />
+    <div className="p-8 bg-slate-50/50 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all">
+      <Label>New {title.slice(0, -1)}</Label>
+      <div className="flex gap-4 mb-8">
+        <input 
+          type="text" 
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleAddItem(inputValue, setInputValue, items, onUpdate)}
+          className="flex-1 px-6 py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl outline-none focus:border-blue-500 text-base font-bold placeholder:text-slate-400"
+          placeholder={placeholder}
+        />
+        <button 
+          onClick={() => handleAddItem(inputValue, setInputValue, items, onUpdate)}
+          className="px-8 bg-blue-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all shadow-md"
+        >
+          Add
+        </button>
+      </div>
+      
+      <div className="flex flex-wrap gap-3">
+        {items.map((item, idx) => (
+          <div 
+            key={idx} 
+            className="bg-white border-2 border-slate-100 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm"
+          >
+            <span className="text-sm font-black text-slate-700 uppercase tracking-widest">{item}</span>
+            <button 
+              onClick={() => onUpdate(items.filter(s => s !== item))}
+              className="text-slate-300 hover:text-red-500 transition-colors"
+            >
+              <i className="fa-solid fa-circle-xmark text-lg"></i>
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
 interface Props {
   data: ResumeData;
   onUpdatePersonal: (field: string, value: string) => void;
@@ -89,52 +135,6 @@ const ResumeForm: React.FC<Props> = ({
       setVal('');
     }
   };
-
-  const ListSection = ({ 
-    title, icon, items, onUpdate, inputValue, setInputValue, placeholder 
-  }: { 
-    title: string, icon: string, items: string[], onUpdate: (list: string[]) => void, inputValue: string, setInputValue: React.Dispatch<React.SetStateAction<string>>, placeholder: string 
-  }) => (
-    <div>
-      <SectionTitle title={title} icon={icon} />
-      <div className="p-8 bg-slate-50/50 rounded-[2.5rem] border border-slate-100 shadow-sm transition-all">
-        <Label>New {title.slice(0, -1)}</Label>
-        <div className="flex gap-4 mb-8">
-          <input 
-            type="text" 
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAddItem(inputValue, setInputValue, items, onUpdate)}
-            className="flex-1 px-6 py-4 bg-white border-2 border-slate-100 text-slate-700 rounded-2xl outline-none focus:border-blue-500 text-base font-bold placeholder:text-slate-400"
-            placeholder={placeholder}
-          />
-          <button 
-            onClick={() => handleAddItem(inputValue, setInputValue, items, onUpdate)}
-            className="px-8 bg-blue-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all shadow-md"
-          >
-            Add
-          </button>
-        </div>
-        
-        <div className="flex flex-wrap gap-3">
-          {items.map((item, idx) => (
-            <div 
-              key={idx} 
-              className="bg-white border-2 border-slate-100 px-5 py-3 rounded-2xl flex items-center gap-3 shadow-sm"
-            >
-              <span className="text-sm font-black text-slate-700 uppercase tracking-widest">{item}</span>
-              <button 
-                onClick={() => onUpdate(items.filter(s => s !== item))}
-                className="text-slate-300 hover:text-red-500 transition-colors"
-              >
-                <i className="fa-solid fa-circle-xmark text-lg"></i>
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="space-y-12 pb-16">
@@ -317,6 +317,7 @@ const ResumeForm: React.FC<Props> = ({
         inputValue={newSkill} 
         setInputValue={setNewSkill} 
         placeholder="E.g. React, Docker..." 
+        handleAddItem={handleAddItem}
       />
 
       <ListSection 
@@ -327,6 +328,7 @@ const ResumeForm: React.FC<Props> = ({
         inputValue={newCert} 
         setInputValue={setNewCert} 
         placeholder="E.g. AWS Solutions Architect" 
+        handleAddItem={handleAddItem}
       />
 
       <ListSection 
@@ -337,6 +339,7 @@ const ResumeForm: React.FC<Props> = ({
         inputValue={newHobby} 
         setInputValue={setNewHobby} 
         placeholder="E.g. Marathon Running" 
+        handleAddItem={handleAddItem}
       />
     </div>
   );
