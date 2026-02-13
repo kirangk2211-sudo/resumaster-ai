@@ -42,12 +42,24 @@ jobs:
       - name: Install Capacitor CLI
         run: npm install -g @capacitor/cli @capacitor/core @capacitor/android
 
-      - name: Initialize Android Platform
+      - name: Initialize & Sync Android
         run: |
           if [ ! -d "android" ]; then
             npx cap add android
           fi
           npx cap sync android
+
+      - name: Patch Android Manifest (Ad ID & Permissions)
+        run: |
+          # Inject Advertising ID permission required for Play Store
+          sed -i '/<application/i \    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>' android/app/src/main/AndroidManifest.xml
+
+      - name: Patch Build Gradle (Auto-Increment Version)
+        run: |
+          # Set versionCode to GitHub Run Number to ensure every upload is an "upgrade"
+          sed -i "s/versionCode 1/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
+          # Also update versionName for clarity
+          sed -i "s/versionName \"1.0\"/versionName \"1.0.$GITHUB_RUN_NUMBER\"/g" android/app/build.gradle
 
       - name: Build Unsigned Release AAB
         run: |
@@ -56,7 +68,7 @@ jobs:
           ./gradlew bundleRelease
 
       - name: Sign Android Release AAB
-        uses: r0adkll/sign-android-release@v1
+        uses: r0adkll/sign-android-release@v1.1.2
         id: sign_app
         with:
           releaseDirectory: android/app/build/outputs/bundle/release
@@ -70,7 +82,7 @@ jobs:
       - name: Upload Signed Release AAB (For Play Store)
         uses: actions/upload-artifact@v4
         with:
-          name: ResuMaster-Android-Signed-AAB
+          name: ResuMaster-v1.0.${{ github.run_number }}-Signed
           path: ${{ steps.sign_app.outputs.signedReleaseFile }}
 
       - name: Build Android Debug APK
@@ -81,5 +93,5 @@ jobs:
       - name: Upload Debug APK (For Testing)
         uses: actions/upload-artifact@v4
         with:
-          name: ResuMaster-Android-Debug-APK
+          name: ResuMaster-v1.0.${{ github.run_number }}-Debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
