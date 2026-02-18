@@ -54,11 +54,20 @@ jobs:
           # Inject Advertising ID permission required for Play Store
           sed -i '/<application/i \    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>' android/app/src/main/AndroidManifest.xml
 
-      - name: Patch Build Gradle (Auto-Increment Version)
+      - name: Patch Build Gradle (Enable Minification & Versioning)
         run: |
-          # Use a more robust regex to find and replace versionCode and versionName
+          # Auto-increment versions
           sed -i "s/versionCode [0-9]*/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
           sed -i "s/versionName \"[0-9.]*\"/versionName \"1.0.$GITHUB_RUN_NUMBER\"/g" android/app/build.gradle
+          
+          # Enable Minification to generate mapping.txt (Deobfuscation file)
+          sed -i 's/minifyEnabled false/minifyEnabled true/g' android/app/build.gradle
+          # Ensure shrinkResources is also enabled for better deobfuscation
+          if ! grep -q "shrinkResources" android/app/build.gradle; then
+            sed -i '/minifyEnabled true/a \            shrinkResources true' android/app/build.gradle
+          else
+            sed -i 's/shrinkResources false/shrinkResources true/g' android/app/build.gradle
+          fi
 
       - name: Build Unsigned Release AAB
         run: |
@@ -89,6 +98,7 @@ jobs:
         with:
           name: ResuMaster-v1.0.${{ github.run_number }}-Mapping-File
           path: android/app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: warn
 
       - name: Build Android Debug APK
         run: |
