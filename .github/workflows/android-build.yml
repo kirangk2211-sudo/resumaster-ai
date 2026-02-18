@@ -54,22 +54,22 @@ jobs:
           # Inject Advertising ID permission required for Play Store
           sed -i '/<application/i \    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>' android/app/src/main/AndroidManifest.xml
 
-      - name: Patch Build Gradle (API 35 & Minification)
+      - name: Patch Build Configuration (API 35 & Versions)
         run: |
-          # Force API Level 35 (Play Store Requirement)
-          sed -i "s/compileSdkVersion [0-9]*/compileSdkVersion 35/g" android/app/build.gradle
-          sed -i "s/targetSdkVersion [0-9]*/targetSdkVersion 35/g" android/app/build.gradle
+          # 1. Update variables.gradle (Capacitor's standard config file)
+          # This avoids breaking 'rootProject' references in build.gradle
+          sed -i "s/compileSdkVersion = [0-9]\+/compileSdkVersion = 35/g" android/variables.gradle
+          sed -i "s/targetSdkVersion = [0-9]\+/targetSdkVersion = 35/g" android/variables.gradle
           
-          # Auto-increment versions
-          sed -i "s/versionCode [0-9]*/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
+          # 2. Update app/build.gradle for versioning and minification
+          # Use [0-9]\+ to ensure we only replace actual numbers
+          sed -i "s/versionCode [0-9]\+/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
           sed -i "s/versionName \"[0-9.]*\"/versionName \"1.0.$GITHUB_RUN_NUMBER\"/g" android/app/build.gradle
           
           # Enable Minification (Required for generating mapping.txt)
           sed -i 's/minifyEnabled false/minifyEnabled true/g' android/app/build.gradle
           if ! grep -q "shrinkResources" android/app/build.gradle; then
             sed -i '/minifyEnabled true/a \            shrinkResources true' android/app/build.gradle
-          else
-            sed -i 's/shrinkResources false/shrinkResources true/g' android/app/build.gradle
           fi
 
       - name: Build Unsigned Release AAB
