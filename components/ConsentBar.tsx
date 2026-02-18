@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 interface Props {
@@ -39,7 +38,7 @@ const ConsentBar: React.FC<Props> = ({ onAccept }) => {
         </div>
         <button 
           onClick={handleAccept}
-          className="whitespace-now80 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95 shadow-lg shadow-blue-900/20"
+          className="whitespace-nowrap px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full transition-all active:scale-95 shadow-lg shadow-blue-900/20"
         >
           Accept & Start
         </button>
