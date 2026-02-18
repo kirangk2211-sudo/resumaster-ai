@@ -3,8 +3,7 @@ name: "DEPLOY: Build Android App"
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+  pull_request: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -54,15 +53,18 @@ jobs:
           # Inject Advertising ID permission required for Play Store
           sed -i '/<application/i \    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>' android/app/src/main/AndroidManifest.xml
 
-      - name: Patch Build Gradle (Enable Minification & Versioning)
+      - name: Patch Build Gradle (API 35 & Minification)
         run: |
+          # Force API Level 35 (Play Store Requirement)
+          sed -i "s/compileSdkVersion [0-9]*/compileSdkVersion 35/g" android/app/build.gradle
+          sed -i "s/targetSdkVersion [0-9]*/targetSdkVersion 35/g" android/app/build.gradle
+          
           # Auto-increment versions
           sed -i "s/versionCode [0-9]*/versionCode $GITHUB_RUN_NUMBER/g" android/app/build.gradle
           sed -i "s/versionName \"[0-9.]*\"/versionName \"1.0.$GITHUB_RUN_NUMBER\"/g" android/app/build.gradle
           
-          # Enable Minification to generate mapping.txt (Deobfuscation file)
+          # Enable Minification (Required for generating mapping.txt)
           sed -i 's/minifyEnabled false/minifyEnabled true/g' android/app/build.gradle
-          # Ensure shrinkResources is also enabled for better deobfuscation
           if ! grep -q "shrinkResources" android/app/build.gradle; then
             sed -i '/minifyEnabled true/a \            shrinkResources true' android/app/build.gradle
           else
@@ -85,19 +87,21 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
         env:
-          BUILD_TOOLS_VERSION: "34.0.0"
+          BUILD_TOOLS_VERSION: "35.0.0"
 
       - name: Upload Signed Release AAB (For Play Store)
         uses: actions/upload-artifact@v4
         with:
-          name: ResuMaster-v1.0.${{ github.run_number }}-Signed
+          name: ResuMaster-v1.0.${{ github.run_number }}-Signed-AAB
           path: ${{ steps.sign_app.outputs.signedReleaseFile }}
 
       - name: Upload Deobfuscation Mapping File
         uses: actions/upload-artifact@v4
         with:
           name: ResuMaster-v1.0.${{ github.run_number }}-Mapping-File
-          path: android/app/build/outputs/mapping/release/mapping.txt
+          path: |
+            android/app/build/outputs/mapping/release/mapping.txt
+            android/app/build/outputs/mapping/release/configuration.txt
           if-no-files-found: warn
 
       - name: Build Android Debug APK
