@@ -87,24 +87,26 @@ const AccountModal: React.FC<Props> = ({ isOpen, onClose, subscription, onSubscr
 
             {activeTab === 'mobile' && (
               <div className="space-y-4">
-                <div className="p-6 rounded-3xl border border-amber-100 bg-amber-50/30">
+                <div className="p-6 rounded-3xl border border-blue-100 bg-blue-50/30">
                   <div className="flex items-center gap-2 mb-4">
-                    <i className="fa-solid fa-triangle-exclamation text-amber-600"></i>
-                    <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest">Fix Play Store Warnings</span>
+                    <i className="fa-solid fa-rocket text-blue-600"></i>
+                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Build Status: API 35 Ready</span>
                   </div>
+                  <p className="text-[10px] text-slate-500 font-medium mb-4">I have updated the build script to target API Level 35 (latest requirement) and auto-increment your version codes.</p>
+                  
                   <div className="space-y-4">
                     <div className="flex gap-3">
-                      <i className="fa-solid fa-users text-amber-500 mt-1 shrink-0"></i>
+                      <i className="fa-solid fa-file-export text-emerald-500 mt-1 shrink-0"></i>
                       <div>
-                        <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">Warning: No Testers</p>
-                        <p className="text-[9px] text-slate-500 font-medium">In Play Console, go to Testing → Internal testing. Click the Testers tab and add your email list. Then, copy the "Join on Android" link and open it on your phone.</p>
+                        <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">Fix Deobfuscation Warning</p>
+                        <p className="text-[9px] text-slate-500 font-medium">Download the <span className="font-bold">mapping.txt</span> from GitHub Action artifacts. In Play Console → App Bundles, upload it to clear the "No deobfuscation file" warning.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
-                      <i className="fa-solid fa-code text-amber-500 mt-1 shrink-0"></i>
+                      <i className="fa-solid fa-users-viewfinder text-amber-500 mt-1 shrink-0"></i>
                       <div>
-                        <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">Warning: No Deobfuscation</p>
-                        <p className="text-[9px] text-slate-500 font-medium">I've enabled minification in the build script. If the mapping file is generated, upload it to the App Bundles section in Play Console.</p>
+                        <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">Fix "App Not Available"</p>
+                        <p className="text-[9px] text-slate-500 font-medium">You MUST add your email to the "Testers" list in Play Console → Testing → Internal testing and accept the invite link on your phone.</p>
                       </div>
                     </div>
                   </div>
