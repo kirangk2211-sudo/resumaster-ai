@@ -97,14 +97,14 @@ const AccountModal: React.FC<Props> = ({ isOpen, onClose, subscription, onSubscr
                       <i className="fa-solid fa-users text-amber-500 mt-1 shrink-0"></i>
                       <div>
                         <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">Warning: No Testers</p>
-                        <p className="text-[9px] text-slate-500 font-medium">In Play Console, go to Testing → Internal testing. Click the Testers tab and add your email list.</p>
+                        <p className="text-[9px] text-slate-500 font-medium">In Play Console, go to Testing → Internal testing. Click the Testers tab and add your email list. Then, copy the "Join on Android" link and open it on your phone.</p>
                       </div>
                     </div>
                     <div className="flex gap-3">
                       <i className="fa-solid fa-code text-amber-500 mt-1 shrink-0"></i>
                       <div>
                         <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">Warning: No Deobfuscation</p>
-                        <p className="text-[9px] text-slate-500 font-medium">Download mapping.txt from GitHub build artifacts and upload it to the App Bundles section in Play Console.</p>
+                        <p className="text-[9px] text-slate-500 font-medium">I've enabled minification in the build script. If the mapping file is generated, upload it to the App Bundles section in Play Console.</p>
                       </div>
                     </div>
                   </div>
@@ -130,7 +130,7 @@ const AccountModal: React.FC<Props> = ({ isOpen, onClose, subscription, onSubscr
           </div>
 
           <div className="mt-8 flex justify-center gap-6 border-t border-slate-50 pt-6">
-            <button onClick={() => setActiveLegal('privacy')} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600">Privacy</button>
+            <button onClick={() => setActiveLegal('privacy')} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600">Privacy Policy</button>
             <button onClick={() => setActiveLegal('terms')} className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-slate-600">Terms</button>
           </div>
         </div>
